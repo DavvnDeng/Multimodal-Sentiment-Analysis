@@ -53,22 +53,16 @@ def train():
     print(f"训练集数量: {len(train_df)}, 验证集数量: {len(val_df)}")
 
     # 图像预处理
-    train_transform = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.RandomHorizontalFlip(p=0.5), # 50%概率水平翻转
-        transforms.RandomRotation(degrees=15),  # 随机旋转 -15~15 度
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    val_transform = transforms.Compose([
+    transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    # 3. 加载数据集时分别使用
-    train_dataset = MultiModalDataset(DATA_DIR, os.path.join(DATA_DIR, "train_split.csv"), transform=train_transform) # 用增强的
-    val_dataset = MultiModalDataset(DATA_DIR, os.path.join(DATA_DIR, "val_split.csv"), transform=val_transform)     # 用普通的
+    # 实例化 Dataset
+    train_dataset = MultiModalDataset(DATA_DIR, os.path.join(DATA_DIR, "train_split.csv"), transform=transform)
+    val_dataset = MultiModalDataset(DATA_DIR, os.path.join(DATA_DIR, "val_split.csv"), transform=transform)
+
     # 实例化 DataLoader
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
